@@ -1,0 +1,68 @@
+import heapq
+
+class Graph:
+    def __init__(self):
+        self.graph = {}
+
+    def add_edge(self, start, end, cost):
+        if start in self.graph:
+            self.graph[start].append((end, cost))
+        else:
+            self.graph[start] = [(end, cost)]
+
+def astar(graph, start, end):
+    open_list = [(0, start)]
+    came_from = {}
+    g_score = {node: float('inf') for node in graph.graph}
+    g_score[start] = 0
+    f_score = {node: float('inf') for node in graph.graph}
+    f_score[start] = heuristic(start, end)
+
+    while open_list:
+        _, current = heapq.heappop(open_list)
+
+        if current == end:
+            return reconstruct_path(came_from, end)
+
+        for neighbor, cost in graph.graph[current]:
+            tentative_g_score = g_score[current] + cost
+
+            if tentative_g_score < g_score[neighbor]:
+                came_from[neighbor] = current
+                g_score[neighbor] = tentative_g_score
+                f_score[neighbor] = g_score[neighbor] + heuristic(neighbor, end)
+                heapq.heappush(open_list, (f_score[neighbor], neighbor))
+
+    return None
+
+def heuristic(node, end):
+    # Assuming a simple heuristic that calculates the absolute difference
+    # in the ASCII values of the characters as an estimate of distance
+    return abs(ord(node) - ord(end))
+
+def reconstruct_path(came_from, current):
+    path = [current]
+    while current in came_from:
+        current = came_from[current]
+        path.append(current)
+    return list(reversed(path))
+
+# Create the graph with edge costs
+g = Graph()
+g.add_edge('S', 'A', 1)
+g.add_edge('S', 'B', 2)
+g.add_edge('A', 'C', 3)
+g.add_edge('B', 'C', 1)
+g.add_edge('C', 'D', 2)
+
+# Define the source and destination
+source = 'S'
+destination = 'D'
+
+# Find and display the shortest path using A*
+shortest_path = astar(g, source, destination)
+
+if shortest_path:
+    print(f"Shortest path from {source} to {destination}: {' -> '.join(shortest_path)}")
+else:
+    print(f"No path found from {source} to {destination}")
