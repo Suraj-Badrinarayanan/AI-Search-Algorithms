@@ -1,0 +1,44 @@
+class Graph:
+    def __init__(self):
+        self.graph = {}
+
+    def add_edge(self, start, end):
+        if start in self.graph:
+            self.graph[start].append(end)
+        else:
+            self.graph[start] = [end]
+
+def find_shortest_path(graph, start, end, path=[]):
+    path = path + [start]
+    if start == end:
+        return path
+    if start not in graph:
+        return None
+    shortest_path = None
+    for node in graph[start]:
+        if node not in path:
+            new_path = find_shortest_path(graph, node, end, path)
+            if new_path:
+                if shortest_path is None or len(new_path) < len(shortest_path):
+                    shortest_path = new_path
+    return shortest_path
+
+# Create the graph
+g = Graph()
+g.add_edge('S', 'A')
+g.add_edge('S', 'B')
+g.add_edge('A', 'C')
+g.add_edge('B', 'C')
+g.add_edge('C', 'D')
+
+# Define the source and destination
+source = 'S'
+destination = 'D'
+
+# Find and display the shortest path
+shortest_path = find_shortest_path(g.graph, source, destination)
+
+if shortest_path:
+    print(f"Shortest path from {source} to {destination}: {' -> '.join(shortest_path)}")
+else:
+    print(f"No path found from {source} to {destination}")
