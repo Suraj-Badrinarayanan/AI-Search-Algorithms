@@ -1,0 +1,43 @@
+class Graph:
+    def __init__(self):
+        self.graph = {}
+
+    def add_edge(self, start, end):
+        if start in self.graph:
+            self.graph[start].append(end)
+        else:
+            self.graph[start] = [end]
+
+def find_all_paths(graph, start, end, path=[]):
+    path = path + [start]
+    if start == end:
+        return [path]
+    if start not in graph:
+        return []
+    paths = []
+    for node in graph[start]:
+        if node not in path:
+            new_paths = find_all_paths(graph, node, end, path)
+            for new_path in new_paths:
+                paths.append(new_path)
+    return paths
+
+# Create a sample graph
+g = Graph()
+g.add_edge('S', 'A')
+g.add_edge('S', 'B')
+g.add_edge('A', 'C')
+g.add_edge('B', 'C')
+g.add_edge('C', 'D')
+
+source = 'S'
+destination = 'D'
+
+all_paths = find_all_paths(g.graph, source, destination)
+
+if not all_paths:
+    print(f"No paths found from {source} to {destination}")
+else:
+    print(f"All possible paths from {source} to {destination}:")
+    for path in all_paths:
+        print(" -> ".join(path))
