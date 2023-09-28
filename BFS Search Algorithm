@@ -1,0 +1,51 @@
+from collections import deque
+
+class Graph:
+    def __init__(self):
+        self.graph = {}
+
+    def add_edge(self, start, end):
+        if start in self.graph:
+            self.graph[start].append(end)
+        else:
+            self.graph[start] = [end]
+
+def bfs(graph, start, end):
+    visited = set()
+    queue = deque([[start]])
+    
+    while queue:
+        path = queue.popleft()
+        node = path[-1]
+        
+        if node == end:
+            return path
+        
+        if node not in visited:
+            visited.add(node)
+            for neighbor in graph.get(node, []):
+                new_path = list(path)
+                new_path.append(neighbor)
+                queue.append(new_path)
+    
+    return None
+
+# Create the graph
+g = Graph()
+g.add_edge('S', 'A')
+g.add_edge('S', 'B')
+g.add_edge('A', 'C')
+g.add_edge('B', 'C')
+g.add_edge('C', 'D')
+
+# Define the source and destination
+source = 'S'
+destination = 'D'
+
+# Perform BFS from 'S' to 'D'
+shortest_path = bfs(g.graph, source, destination)
+
+if shortest_path:
+    print(f"Shortest path from {source} to {destination}: {' -> '.join(shortest_path)}")
+else:
+    print(f"No path found from {source} to {destination}")
